@@ -1,0 +1,7 @@
+/* Add this to end of a css file to debug*/
+
+* {
+    background: #000 !important;
+    color: #0f0 !important;
+    outline: solid #f00 1px !important;
+  }

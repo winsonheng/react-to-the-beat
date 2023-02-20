@@ -1,0 +1,12 @@
+.rhythm-lane {
+    height: 15%;
+    width: 100%;
+    background-color: yellow;
+    word-wrap: break-word;
+}
+
+.rhythm-sidebar-remove {
+    position: absolute;
+    left: -1000px;
+    transition: all linear;
+}
