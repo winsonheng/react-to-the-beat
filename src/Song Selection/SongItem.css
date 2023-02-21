@@ -12,10 +12,23 @@
     border: none;
 }
 
+@keyframes expand-contract {
+    0% {
+        scale: 1;
+    }
+    50% {
+        scale: 1.05;
+    }
+    100% {
+        scale: 1.0;
+    }
+}
+
 .songitem:hover {
     transition: translate 0.33s cubic-bezier(0.645, 0.045, 0.355, 1);
     translate: 7%;
     border: 3px solid grey;
+    animation: expand-contract 1.5s ease-in-out infinite;
 }
 
 .songitem > div {
@@ -23,7 +36,7 @@
 }
 
 .difficulty-container {
-    background-color: rgb(216, 225, 240);
+    background-color: white;
     height: 100%;
     display: flex;
     flex-direction: row;

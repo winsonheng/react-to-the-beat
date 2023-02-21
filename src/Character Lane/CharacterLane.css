@@ -1,0 +1,39 @@
+.character-lane {
+  height: 100%;
+  width: 20%;
+  display: flex;
+  flex-direction: row;
+  animation: slide-right 1.2s ease-out;
+}
+
+@keyframes slide-right {
+  0% {
+      translate: -100%;
+  }
+  100% {
+      translate: 0%;
+  }
+}
+
+.lava-wall {
+  height: 100%;
+  aspect-ratio: 150 / 570;
+  background: url("../assets/images/lava-wall.png");
+  background-size: auto 100%;
+}
+
+.character-container {
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: right;
+}
+
+.character {
+  height: 69%;
+  aspect-ratio: 420 / 655;
+  background: url("../assets/images/character.png");
+  background-size: auto 100%;
+}

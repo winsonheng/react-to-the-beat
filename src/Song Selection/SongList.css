@@ -24,6 +24,34 @@
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none;  /* Firefox */
 }
+
 .songlist::-webkit-scrollbar { 
     display: none;  /* Safari and Chrome */
+}
+
+.hide-left {
+    animation: hide-left-animation 0.33s ease-in forwards;
+}
+
+@keyframes hide-left-animation {
+    0% {
+        translate: 0%;
+    }
+    100% {
+        translate: -100%;
+
+    }
+}
+
+.hide-right {
+    animation: hide-right-animation 0.33s ease-in forwards;
+}
+
+@keyframes hide-right-animation {
+    0% {
+        translate: 0%;
+    }
+    100% {
+        translate: 100%;
+    }
 }

@@ -8,7 +8,7 @@ export default function SongItem(props) {
   }
 
   return (
-    <div className='songitem'>
+    <div className='songitem' onClick={() => props.hideSonglist(props.songData)}>
       <div className='difficulty-container'>
         <div className='difficulty'>{props.songData.difficulty}</div>
       </div>
