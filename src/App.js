@@ -21,9 +21,9 @@ function App() {
         </a>
       </header>
       */}
-      <body className='App-body'>
+      <div className='App-body'>
         <GameLayout></GameLayout>
-      </body>
+      </div>
     </div>
   );
 }

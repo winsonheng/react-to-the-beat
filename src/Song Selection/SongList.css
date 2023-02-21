@@ -1,0 +1,29 @@
+.songlist-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.choose-track-text {   
+    width: 40%;
+    color: aliceblue;
+}
+
+.songlist {
+    height: 90%;
+    width: 100%;
+    overflow-y: scroll;
+    align-items: center;
+    padding: 10px 20px 10px 20px;
+    box-sizing: border-box;
+}
+
+.songlist {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+.songlist::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}

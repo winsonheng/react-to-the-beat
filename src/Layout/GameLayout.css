@@ -14,13 +14,34 @@
     width: 100%;
     color: red;
     overflow: hidden;
+    position: relative;
+}
+
+.game-area-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 100;
 }
 
 .scrolling-image {
-  background: url("../../public/images/background-cropped.png");
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: url("../assets/images/background-cropped.png") repeat-x;
   height: 100%;
-  width: 100%;
+  aspect-ratio: 2240 / 221;
   background-size: auto 100%;
+  animation: slide 25s linear infinite;
+}
+
+@keyframes slide {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translate(-50%); /* The image width */
+  }
 }
 
 .landing-title {

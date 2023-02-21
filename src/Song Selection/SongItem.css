@@ -1,0 +1,137 @@
+.songitem {
+    height: 80px;
+    width: 80%;
+    background-color: rgba(18, 53, 108, 0.687);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0px 0px 20px 0px;
+
+    transition: translate 0.33s cubic-bezier(0.645, 0.045, 0.355, 1);
+    translate: 0%;
+    border: none;
+}
+
+.songitem:hover {
+    transition: translate 0.33s cubic-bezier(0.645, 0.045, 0.355, 1);
+    translate: 7%;
+    border: 3px solid grey;
+}
+
+.songitem > div {
+    color: white;
+}
+
+.difficulty-container {
+    background-color: rgb(216, 225, 240);
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+    padding: 0px 15px 0px 15px;
+}
+
+.difficulty {
+    color: rgb(185, 115, 250);
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.song-info-container {
+    height: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 5px 15px 5px 20px;
+    box-sizing: border-box;
+}
+
+.song-name {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.song-artist {
+    font-size: 20px;
+    font-weight: 300;
+    font-style: italic;
+    text-align: left;
+}
+
+.songitem-right {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+}
+
+.bpm-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 5px 15px 5px 15px;
+    box-sizing: border-box;
+}
+
+.bpm-text {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: monospace;
+    text-align: center;
+}
+
+.bpm {
+    font-size: 24px;
+    font-weight: 400;
+    font-style: italic;
+    text-align: center;
+}
+
+.highscore-container {
+    background-color: rgba(216, 85, 230, 0.66);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 5px 15px 5px 15px;
+    box-sizing: border-box;
+}
+
+.highscore-text {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: monospace;
+    text-align: center;
+}
+
+.highscore {
+    font-size: 24px;
+    font-weight: 400;
+    font-style: italic;
+    text-align: center;
+}
+
+.grade-container {
+    background-color: rgba(123, 4, 137, 0.655);
+    height: 100%;
+    width: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+    padding: 0px 15px 0px 15px;
+}
+
+.grade {
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;
+}
