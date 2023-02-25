@@ -3,3 +3,21 @@
     width: 100%;
     background-color: green;
 }
+
+.loading-container {
+    height: 30%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-text {
+    font-size: 28px;
+    visibility: hidden;
+}
+
+.loading-text-active {
+    visibility: visible;
+}

@@ -1,11 +1,14 @@
 [
   {
     "difficulty": 6,
-    "name": "World Vanquisher",
-    "artist": "void (Mournfinale)",
-    "bpm": 170,
-    "highscore": 9823612,
-    "grade": "EX"
+    "name": "Tempestissimo",
+    "artist": "t+pazolite",
+    "bpm": 231,
+    "highscore": 9908193,
+    "grade": "EX",
+    "beatmap": "Tempestissimo.txt",
+    "audioSrc": "Tempestissimo.mp3",
+    "initOffset": 1800
   },
   {
     "difficulty": 7,
@@ -16,7 +19,7 @@
     "grade": "AA"
   },
   {
-    "difficulty": 6,
+    "difficulty": 8,
     "name": "World Vanquisher",
     "artist": "void (Mournfinale)",
     "bpm": 170,
