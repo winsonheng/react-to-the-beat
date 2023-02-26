@@ -15,6 +15,41 @@
     overflow-x: hidden;
 }
 
+.hit-text-container {
+    height: 100%;
+    width: 20%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0%;
+}
+
+.bottom > .hit-text-container {
+    top: 55%;
+}
+
+.hit-text {
+    font-weight: 500;
+    font-style: italic;
+    visibility: hidden;
+}
+
+.hit-text-active {
+    visibility: visible;
+    animation: hit-text-animation 0.7s linear;
+}
+
+@keyframes hit-text-animation {
+    0% {
+        visibility: visible;
+    }
+    100% {
+        visibility: hidden;
+    }
+}
+
 .activation-line-active {
     height: 70%;
     width: 1%;
@@ -82,7 +117,6 @@
 .beat-wrapper {
     height: 40px;
     width: 40px;
-    border-radius: 50px;
     position: absolute;
     left: -100px;
 }
@@ -97,12 +131,21 @@
     box-sizing: border-box;
 }
 
+.bottom > .beat {
+    top: 55%;
+}
+
 .beat-inactive {
     visibility: hidden;
 }
 
 .beat-hit {
     border-color: gold;
+    animation: beat-hit-animation 0.3s ease-in-out;
+}
+
+.beat-hit-miss {
+    border-color: red;
     animation: beat-hit-animation 0.3s ease-in-out;
 }
 

@@ -2,6 +2,13 @@ import { useRef } from 'react';
 import './RhythmLane.css';
 import hitSound from '../assets/audio/hit-sound.mp3';
 
+const AUDIO_PLAYER = new Audio();
+const FIXED_DELAY = 1000;
+const LATENCY = 100;
+const PERFECT_WINDOW = 80;
+const FAR_WINDOW = 125;
+const MISS_WINDOW = 200;
+
 function waitForElm(selector) {
 	return new Promise(resolve => {
 			if (document.querySelector(selector)) {
@@ -25,52 +32,93 @@ function waitForElm(selector) {
 function RhythmLane(props) {
 	console.log('props: ', props);
 
+	const hitSoundAudio = new Audio(hitSound);
 	const activationCircle = useRef();
+	const hitText = useRef();
+
+	let lastBeatOfTop;
+	let lastBeatOfBottom;
+
 	let isSongInProgress = false;
 
-	let keyframes = Array(0);
-	let timings = Array(0);
+	let keyframes = Array(0); // Object array where each Object contains the keyframes of animation
+	let durations = Array(0); // Object array where each Object contains the duration of animation
+	let timings = Array(0); // Float array of time taken to reach activation circle
+	let beatIds = Array(0);
 	let beats = Array(0);
 
+	let windowWidth = 0;
+	let translateOffset = 0; // The extra length a beat travels after reaching the activation circle
+
 	if (props.active) {
-
-		// TODO: Check how to make this work
 		console.log(props.songData);
-		const bpm = 231;
-		const crotchet = 60 * 1000 / bpm;
-		const initOffset = 1800;
+		windowWidth = window.innerWidth;
+		translateOffset = 70 + windowWidth * 0.255;
+		console.log(windowWidth, translateOffset);
+		loadAudio();
+		createBeats();
+	}
 
+	function loadAudio() {
 		if (props.lane == 'top') {
-			let audio = new Audio(URL.createObjectURL(props.songData.audioBlob));
-    	audio.load();
-    	audio.play();
+			AUDIO_PLAYER.src = URL.createObjectURL(props.songData.audioBlob);
+			AUDIO_PLAYER.load();
 		}
+	}
 
-		const arr = [0,3,3.5,4,5,6,7,8,10,12,14,16,19,19.5,20,21,22,23,24,24.25,24.5,24.75,25,25.25,25.5,25.75,26,26.25,26.5,26.75,27,27.25,27.5,27.75,28];
-		keyframes = Array(arr.length).fill(0);
-		timings = Array(arr.length).fill(0);
+	function createBeats() {
+		const songData = props.songData;
+		const bpm = songData.bpm;
+		const crotchet = 60 * 1000 / bpm;
+		console.log('bpm: ', bpm, 'crotchet: ', crotchet);
+		const initOffset = songData.initOffset;
+
+		let beats = props.lane == 'top' ? songData.beatmapAssets.top : songData.beatmapAssets.bottom;
+
+		lastBeatOfTop = songData.beatmapAssets.top.at(-1)[0];
+		lastBeatOfBottom = songData.beatmapAssets.bottom.at(-1)[0];
+
+		beatIds = Array(beats.length);
+		keyframes = Array(beats.length);
+		durations = Array(beats.length);
+		timings = Array(beats.length);
 
 		console.log('Just become active', keyframes.length);
 
-		let currX = 1000;
-		for (const i in arr) {
-			currX = initOffset + arr[i] * crotchet;
+		let currX;
+		for (const i in beats) {
+			console.log('beat ', i, ': ', beats[i][1], " pos: ", beats[i][0]);
+			beatIds[i] = beats[i][0];
+
+			currX = translateOffset + initOffset + beats[i][1] * crotchet;
+
 			keyframes[i] = [
 				{ transform: `translateX(${currX}px)`, visibility: 'visible' },
 				{ transform: `translateX(0px)`, visibility: 'hidden' }
 			];
-			timings[i] = {
+
+			durations[i] = {
 				duration: currX,
 			}
-		}
 
+			timings[i] = currX - translateOffset;
+		}
 	}
 
 	function waitForBeatsToLoad() {
-		console.log('waiting', 'beat-' + (keyframes.length - 1));
-		waitForElm('#beat-' + (keyframes.length - 1)).then((elm) => {
-			console.log('Element is ready');
-			beginSong();
+		console.log('waiting', 'beat-' + lastBeatOfTop, ' and ', lastBeatOfBottom);
+
+		// Wait for the last beat of both the top and bottom lanes to load
+		// Then wait wait a a couple of seconds as defined by fixedDelay
+		// Then wait for audio file to load
+		waitForElm('#beat-' + lastBeatOfTop).then((elm) => {
+			console.log('Element is ready: ', elm, props.lane);
+			waitForElm('#beat-' + lastBeatOfBottom).then((elm) => {
+				console.log('Element is ready: ', elm, 'bottom');
+				setTimeout(function() {
+					beginSong();
+				}, FIXED_DELAY);
+			});
 		});
 	}
 
@@ -80,54 +128,129 @@ function RhythmLane(props) {
 		}
 		isSongInProgress = true;
 
-		console.log('beginning');
+		console.log('beginning song');
+		
 		beats = Array(keyframes.length);
 		for (const i in keyframes) {
-			const beatWrapper = document.getElementById(props.lane+'-beat-wrapper-' + i);
-			beatWrapper.animate(keyframes[i], timings[i]);
-			beatWrapper.addEventListener('animationend', (e) => {
-				console.log('finish');
-				beatWrapper.classList.add('beat-inactive');
-			});
-			const beat = document.getElementById(props.lane+'-beat-' + i);
+			const beatId = beatIds[i];
+			const beat = document.getElementById('beat-' + beatId);
 			beats[i] = beat;
+
+			const beatWrapper = document.getElementById('beat-wrapper-' + beatId);
+
+			beatWrapper.animate(keyframes[i], durations[i]).onfinish = () => {
+				console.log('finish animate');
+				beatWrapper.classList.add('beat-inactive');
+			};
+
+			beat.animate([], { duration: timings[i] + MISS_WINDOW }).onfinish = () => {
+				if (beats.at(-1) == beat) {
+					console.log('MISSED LATE!!!');
+					beat.classList.add('beat-hit-miss');
+
+					const hitTextDiv = hitText.current;
+					hitTextDiv.innerText = 'MISS!';
+					hitTextDiv.style.color = 'red';
+					resetAnimations(hitTextDiv);
+					hitTextDiv.classList.add('hit-text-active');
+
+					beats.pop();
+					timings.pop();
+				}
+			}
+
+		}
+
+		if (props.lane == 'top') {
+			AUDIO_PLAYER.play();
 		}
 
 		beats.reverse();
-
-		const songPlayer = document.querySelector('#song-player');
-
-		setTimeout(() => {
-			songPlayer.currentTime = 0;
-			songPlayer.play();
-		}, 1000);
+		timings.reverse();
 
 		activationCircle.current.addEventListener('animationend', (e) => {
 			activationCircle.current.classList.remove('activation-circle-hit');
 		});
 
+		hitText.current.addEventListener('animationend', (e) => {
+			hitText.current.classList.remove('hit-text-active');
+		});
+
 		document.addEventListener('keydown', (e) => {
-			const audio = new Audio(hitSound);
-			audio.play();
-			activationCircle.current.classList.add('activation-circle-hit');
-			if (beats.length > 0) {
-				beats.pop().classList.add('beat-hit');
-			}
+
+			if (props.lane == 'top' && (e.key === 's' || e.key === 'd')
+					|| props.lane == 'bottom' && (e.key === 'j' || e.key === 'k')) {
+
+				hitSoundAudio.currentTime = 0;
+				hitSoundAudio.play();
+				activationCircle.current.classList.add('activation-circle-hit');
+
+				if (beats.length > 0) {
+					const curBeat = beats.at(-1);
+					const diffTiming = AUDIO_PLAYER.currentTime * 1000 + LATENCY - timings.at(-1);
+					const absDiffTiming = Math.abs(diffTiming);
+					const isEarly = diffTiming < 0;
+
+					const hitTextDiv = hitText.current;
+					console.log(AUDIO_PLAYER.currentTime * 1000 + LATENCY, diffTiming);
+
+					if (absDiffTiming > MISS_WINDOW) {
+						return;
+					}
+
+					resetAnimations(hitTextDiv);
+
+					hitTextDiv.classList.add('hit-text-active');
+
+					if (absDiffTiming <= PERFECT_WINDOW) {
+						curBeat.classList.add('beat-hit');
+						hitTextDiv.innerText = 'Perfect!';
+						hitTextDiv.style.color = 'lightgreen';
+					} else if (absDiffTiming <= FAR_WINDOW) {
+						curBeat.classList.add('beat-hit');
+						if (isEarly) {
+							hitTextDiv.innerText = 'Early!';
+							hitTextDiv.style.color = 'deepskyblue';
+						} else {
+							hitTextDiv.innerText = 'Late!';
+							hitTextDiv.style.color = 'orange';
+						}
+					} else { // absDiffTiming <= MISS_WINDOW
+						curBeat.classList.add('beat-hit-miss');
+						hitTextDiv.innerText = 'MISS!';
+						hitTextDiv.style.color = 'red';
+					}
+
+					beats.pop();
+					timings.pop();
+
+				}
+
+			} 
 		});
 
 	}
 
+	function resetAnimations(targetDiv) {
+		targetDiv.getAnimations().forEach((anim) => {
+			anim.cancel();
+			anim.play();
+		});
+	}
+
 	return (
-		<div className='rhythm-lane'>
+		<div className={'rhythm-lane ' + props.lane}>
 			<div className={props.active ? 'activation-line-active' : 'activation-line-inactive'}></div>
-			<audio id='song-player' src={props.songData == null ? null : props.songData.songSrc} preload='auto'></audio>
 			<div className='beat-container'>
+				<div className='hit-text-container'>
+					<div className='hit-text' ref={hitText}>Perfect!</div>
+				</div>
 				<div className='activation-beat-container'>
 					<div className={props.active ? 'activation-circle-active' : 'activation-circle-inactive'} ref={activationCircle}></div>
 				</div>
-				{keyframes.map((item, index) => (
-					<div className='beat-wrapper' key={index} id={props.lane + '-beat-wrapper-' + index}>
-						<div className='beat' key={index} id={props.lane+'-beat-' + index}></div>
+				{beatIds.map((item, index) => (
+					<div className='beat-wrapper' key={item} id={'beat-wrapper-' + item}>
+						<div className='beat' key={item} id={'beat-' + item}></div>
 					</div>
 				))} 
 				{waitForBeatsToLoad()}
