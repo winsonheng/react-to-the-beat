@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import './GameLayout.css';
 import RhythmLane from '../Rhythm Lane/RhythmLane';
 import ScoreBoard from '../ScoreBoard/ScoreBoard';
@@ -6,6 +6,7 @@ import StartMenu from './StartMenu';
 import SongList from '../Song Selection/SongList';
 import CharacterLane from '../Character Lane/CharacterLane';
 import readBeatmap from '../util/SongAssetsReader';
+
 
 function GameLayout() {
     const GameState = {
@@ -36,6 +37,11 @@ function GameLayout() {
         songToPlay: null
     });
 
+    const [scoreboardFunctions, setScoreboardFunctions] = useState({
+        startProgressBar: null,
+        updateScoreboard: null
+    });
+
     /**
      * Called when Start button is clicked.
      */
@@ -56,11 +62,9 @@ function GameLayout() {
      * @param {Object} songData - Contains song info directly extracted from songlist.json.
      */
     function songClick(songData) {
-        console.log("Song clicked: ", songData);
         readBeatmap(songData, songDataLoaded);
 
         setState(prevState => {
-            console.log("Updating...");
             return {
                 ...prevState, 
                 gameState: GameState.SongLoading, 
@@ -69,13 +73,21 @@ function GameLayout() {
         });
     }
 
+    function setFunctionFromScoreboard(startProgressBar, updateScoreboard) {
+        setScoreboardFunctions(prevState => {
+            return {
+                startProgressBar: startProgressBar,
+                updateScoreboard: updateScoreboard
+            };
+        })
+    }
+
     /**
      * Called when the required song data (beatmap and audio) have been loaded.
      * Updates the state to SongBegin which starts the game.
      * @param {Object} songData - Same as previous songData but contains song assets including the beatmap and audio. 
      */
     function songDataLoaded(songData) {
-        console.log('YAY WE LOADED');
         setState(prevState => {
             console.log("Ready to start song...");
             return {
@@ -86,11 +98,16 @@ function GameLayout() {
         });
     }
 
+    function songEnd() {
+        console.log('We\'re back!');
+    }
+
     const gameAreaComponent = getGameAreaComponent(state);
 
     return (
         <div className='landing'>
-            <RhythmLane active={state.gameState == GameState.SongBegin} songData={state.songToPlay} lane='top'></RhythmLane>
+            <RhythmLane active={state.gameState == GameState.SongBegin} songData={state.songToPlay} lane='top' 
+                scoreboardFunctions={scoreboardFunctions} onSongEnd={songEnd}></RhythmLane>
             
             <div className='game-area'>
                 <div className='game-area-container'>
@@ -99,8 +116,12 @@ function GameLayout() {
                 <div className='scrolling-image'>
                 </div>
             </div>
-            <RhythmLane active={state.gameState == GameState.SongBegin} songData={state.songToPlay} lane='bottom'></RhythmLane>
-            <ScoreBoard isLoading={state.gameState == GameState.SongLoading}></ScoreBoard>
+            
+            <RhythmLane active={state.gameState == GameState.SongBegin} songData={state.songToPlay} lane='bottom' 
+                scoreboardFunctions={scoreboardFunctions} onSongEnd={songEnd}></RhythmLane>
+
+            <ScoreBoard isLoading={state.gameState == GameState.SongLoading} isActive={state.gameState == GameState.SongBegin} 
+                songData={state.songToPlay} setUpdateFunction={setFunctionFromScoreboard}></ScoreBoard>
         </div>
     );
 }

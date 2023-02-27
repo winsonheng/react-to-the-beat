@@ -52,7 +52,7 @@
 
 .activation-line-active {
     height: 70%;
-    width: 1%;
+    width: 5px;
     position: absolute;
     top: 0;
     left: 25%;
@@ -63,7 +63,7 @@
 
 .activation-line-inactive {
     height: 70%;
-    width: 1%;
+    width: 5px;
     position: absolute;
     top: 0;
     left: 25%;
@@ -73,7 +73,7 @@
 }
 
 .activation-beat-container {
-    width: 51%;
+    width: calc(50% + 5px);
     display: flex;
     flex-direction: row;
     align-items: center;

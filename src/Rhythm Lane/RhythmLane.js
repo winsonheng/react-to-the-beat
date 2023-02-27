@@ -1,13 +1,23 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { JUDGEMENT_TYPES } from '../ScoreBoard/ScoreBoard';
 import './RhythmLane.css';
 import hitSound from '../assets/audio/hit-sound.mp3';
 
 const AUDIO_PLAYER = new Audio();
 const FIXED_DELAY = 1000;
-const LATENCY = 100;
+const LATENCY = 150;
 const PERFECT_WINDOW = 80;
 const FAR_WINDOW = 125;
 const MISS_WINDOW = 200;
+
+function calculateAccuracy(absDiffTiming) {
+	if (absDiffTiming <= PERFECT_WINDOW) {
+		return 100;
+	} else if (absDiffTiming > MISS_WINDOW) {
+		return 0;
+	}
+	return 100 * (MISS_WINDOW - absDiffTiming) / (MISS_WINDOW - PERFECT_WINDOW);
+}
 
 function waitForElm(selector) {
 	return new Promise(resolve => {
@@ -30,39 +40,50 @@ function waitForElm(selector) {
 }
 
 function RhythmLane(props) {
-	console.log('props: ', props);
+
+	const [isInitialised, setIsInitialised] = useState(false);
 
 	const hitSoundAudio = new Audio(hitSound);
 	const activationCircle = useRef();
 	const hitText = useRef();
 
-	let lastBeatOfTop;
-	let lastBeatOfBottom;
+	let lastBeatOfTop = useRef();
+	let lastBeatOfBottom = useRef();
 
-	let isSongInProgress = false;
+	let isSongInProgress = useRef(false);
 
-	let keyframes = Array(0); // Object array where each Object contains the keyframes of animation
-	let durations = Array(0); // Object array where each Object contains the duration of animation
-	let timings = Array(0); // Float array of time taken to reach activation circle
-	let beatIds = Array(0);
-	let beats = Array(0);
+	let keyframes = useRef(Array(0)); // Object array where each Object contains the keyframes of animation
+	let durations = useRef(Array(0)); // Object array where each Object contains the duration of animation
+	let timings = useRef(Array(0)); // Float array of time taken to reach activation circle
+	let beatIds = useRef(Array(0));
+	let beats = useRef(Array(0));
 
-	let windowWidth = 0;
-	let translateOffset = 0; // The extra length a beat travels after reaching the activation circle
+	let windowWidth = useRef(0);
+	let translateOffset = useRef(0); // The extra length a beat travels after reaching the activation circle
 
-	if (props.active) {
-		console.log(props.songData);
-		windowWidth = window.innerWidth;
-		translateOffset = 70 + windowWidth * 0.255;
-		console.log(windowWidth, translateOffset);
+	if (props.active && !isInitialised) {
+
+		setIsInitialised(prevState => {
+			return true;
+		});
+
+		windowWidth.current = window.innerWidth;
+		translateOffset.current = 70 + windowWidth.current * 0.25;
+		console.log(windowWidth.current, translateOffset.current);
 		loadAudio();
 		createBeats();
+		waitForBeatsToLoad();
+
 	}
 
 	function loadAudio() {
 		if (props.lane == 'top') {
 			AUDIO_PLAYER.src = URL.createObjectURL(props.songData.audioBlob);
 			AUDIO_PLAYER.load();
+			AUDIO_PLAYER.addEventListener('ended', (e) => {
+				console.log('------------------SONG END---------------------');
+				songEnd();
+			});
 		}
 	}
 
@@ -70,51 +91,48 @@ function RhythmLane(props) {
 		const songData = props.songData;
 		const bpm = songData.bpm;
 		const crotchet = 60 * 1000 / bpm;
-		console.log('bpm: ', bpm, 'crotchet: ', crotchet);
 		const initOffset = songData.initOffset;
 
 		let beats = props.lane == 'top' ? songData.beatmapAssets.top : songData.beatmapAssets.bottom;
 
-		lastBeatOfTop = songData.beatmapAssets.top.at(-1)[0];
-		lastBeatOfBottom = songData.beatmapAssets.bottom.at(-1)[0];
+		lastBeatOfTop.current = songData.beatmapAssets.top.at(-1)[0];
+		lastBeatOfBottom.current = songData.beatmapAssets.bottom.at(-1)[0];
 
-		beatIds = Array(beats.length);
-		keyframes = Array(beats.length);
-		durations = Array(beats.length);
-		timings = Array(beats.length);
-
-		console.log('Just become active', keyframes.length);
+		beatIds.current = Array(beats.length);
+		keyframes.current = Array(beats.length);
+		durations.current = Array(beats.length);
+		timings.current = Array(beats.length);
 
 		let currX;
+
 		for (const i in beats) {
-			console.log('beat ', i, ': ', beats[i][1], " pos: ", beats[i][0]);
-			beatIds[i] = beats[i][0];
 
-			currX = translateOffset + initOffset + beats[i][1] * crotchet;
+			beatIds.current[i] = beats[i][0];
+			currX = translateOffset.current + initOffset + beats[i][1] * crotchet;
 
-			keyframes[i] = [
+			keyframes.current[i] = [
 				{ transform: `translateX(${currX}px)`, visibility: 'visible' },
 				{ transform: `translateX(0px)`, visibility: 'hidden' }
 			];
 
-			durations[i] = {
+			durations.current[i] = {
 				duration: currX,
 			}
 
-			timings[i] = currX - translateOffset;
+			timings.current[i] = currX - translateOffset.current;
 		}
 	}
 
 	function waitForBeatsToLoad() {
-		console.log('waiting', 'beat-' + lastBeatOfTop, ' and ', lastBeatOfBottom);
+		console.log('waiting', 'beat-' + lastBeatOfTop.current, ' and ', lastBeatOfBottom.current);
 
 		// Wait for the last beat of both the top and bottom lanes to load
 		// Then wait wait a a couple of seconds as defined by fixedDelay
 		// Then wait for audio file to load
-		waitForElm('#beat-' + lastBeatOfTop).then((elm) => {
+		waitForElm('#beat-' + lastBeatOfTop.current).then((elm) => {
 			console.log('Element is ready: ', elm, props.lane);
-			waitForElm('#beat-' + lastBeatOfBottom).then((elm) => {
-				console.log('Element is ready: ', elm, 'bottom');
+			waitForElm('#beat-' + lastBeatOfBottom.current).then((elm) => {
+				console.log('Element is ready: ', elm, props.lane);
 				setTimeout(function() {
 					beginSong();
 				}, FIXED_DELAY);
@@ -123,29 +141,34 @@ function RhythmLane(props) {
 	}
 
 	function beginSong() {
-		if (!props.active || isSongInProgress) {
+		if (!props.active || isSongInProgress.current) {
 			return;
 		}
-		isSongInProgress = true;
+		isSongInProgress.current = true;
 
 		console.log('beginning song');
+
+		if (props.lane == 'top') {
+			AUDIO_PLAYER.play();
+			props.scoreboardFunctions.startProgressBar(AUDIO_PLAYER.duration);
+		}
 		
-		beats = Array(keyframes.length);
-		for (const i in keyframes) {
-			const beatId = beatIds[i];
+		beats.current = Array(keyframes.current.length);
+		for (const i in keyframes.current) {
+			const beatId = beatIds.current[i];
 			const beat = document.getElementById('beat-' + beatId);
-			beats[i] = beat;
+			beats.current[i] = beat;
 
 			const beatWrapper = document.getElementById('beat-wrapper-' + beatId);
 
-			beatWrapper.animate(keyframes[i], durations[i]).onfinish = () => {
-				console.log('finish animate');
+			beatWrapper.animate(keyframes.current[i], durations.current[i]).onfinish = () => {
 				beatWrapper.classList.add('beat-inactive');
 			};
 
-			beat.animate([], { duration: timings[i] + MISS_WINDOW }).onfinish = () => {
-				if (beats.at(-1) == beat) {
-					console.log('MISSED LATE!!!');
+			// Animation ends when beat has passed the hit window
+			// Consider beat as 'MISS'
+			beat.animate([], { duration: timings.current[i] + MISS_WINDOW }).onfinish = () => {
+				if (beats.current.at(-1) == beat) {
 					beat.classList.add('beat-hit-miss');
 
 					const hitTextDiv = hitText.current;
@@ -154,19 +177,18 @@ function RhythmLane(props) {
 					resetAnimations(hitTextDiv);
 					hitTextDiv.classList.add('hit-text-active');
 
-					beats.pop();
-					timings.pop();
+					beats.current.pop();
+					timings.current.pop();
+
+					props.scoreboardFunctions.updateScoreboard(0, JUDGEMENT_TYPES.MISS);
 				}
 			}
 
 		}
 
-		if (props.lane == 'top') {
-			AUDIO_PLAYER.play();
-		}
-
-		beats.reverse();
-		timings.reverse();
+		// Reverse the arrays so that we can pop the first beat from the back
+		beats.current.reverse();
+		timings.current.reverse();
 
 		activationCircle.current.addEventListener('animationend', (e) => {
 			activationCircle.current.classList.remove('activation-circle-hit');
@@ -178,6 +200,8 @@ function RhythmLane(props) {
 
 		document.addEventListener('keydown', (e) => {
 
+			console.log(e.key);
+
 			if (props.lane == 'top' && (e.key === 's' || e.key === 'd')
 					|| props.lane == 'bottom' && (e.key === 'j' || e.key === 'k')) {
 
@@ -185,14 +209,14 @@ function RhythmLane(props) {
 				hitSoundAudio.play();
 				activationCircle.current.classList.add('activation-circle-hit');
 
-				if (beats.length > 0) {
-					const curBeat = beats.at(-1);
-					const diffTiming = AUDIO_PLAYER.currentTime * 1000 + LATENCY - timings.at(-1);
+				if (beats.current.length > 0) {
+
+					const curBeat = beats.current.at(-1);
+					const diffTiming = AUDIO_PLAYER.currentTime * 1000 + LATENCY - timings.current.at(-1);
 					const absDiffTiming = Math.abs(diffTiming);
 					const isEarly = diffTiming < 0;
 
 					const hitTextDiv = hitText.current;
-					console.log(AUDIO_PLAYER.currentTime * 1000 + LATENCY, diffTiming);
 
 					if (absDiffTiming > MISS_WINDOW) {
 						return;
@@ -202,33 +226,56 @@ function RhythmLane(props) {
 
 					hitTextDiv.classList.add('hit-text-active');
 
+					const beatAcc = calculateAccuracy(absDiffTiming);
+					let beatJudgement;
+
 					if (absDiffTiming <= PERFECT_WINDOW) {
+
 						curBeat.classList.add('beat-hit');
 						hitTextDiv.innerText = 'Perfect!';
 						hitTextDiv.style.color = 'lightgreen';
+						beatJudgement = JUDGEMENT_TYPES.PERFECT;
+
 					} else if (absDiffTiming <= FAR_WINDOW) {
+
 						curBeat.classList.add('beat-hit');
+
 						if (isEarly) {
+
 							hitTextDiv.innerText = 'Early!';
 							hitTextDiv.style.color = 'deepskyblue';
+							beatJudgement = JUDGEMENT_TYPES.EARLY;
+
 						} else {
+
 							hitTextDiv.innerText = 'Late!';
 							hitTextDiv.style.color = 'orange';
+							beatJudgement = JUDGEMENT_TYPES.LATE;
+
 						}
 					} else { // absDiffTiming <= MISS_WINDOW
+
 						curBeat.classList.add('beat-hit-miss');
 						hitTextDiv.innerText = 'MISS!';
 						hitTextDiv.style.color = 'red';
+						beatJudgement = JUDGEMENT_TYPES.MISS;
+
 					}
 
-					beats.pop();
-					timings.pop();
+					beats.current.pop();
+					timings.current.pop();
+
+					props.scoreboardFunctions.updateScoreboard(calculateAccuracy(absDiffTiming), beatJudgement);
 
 				}
 
 			} 
 		});
 
+	}
+
+	function songEnd() {
+		props.onSongEnd();
 	}
 
 	function resetAnimations(targetDiv) {
@@ -248,12 +295,11 @@ function RhythmLane(props) {
 				<div className='activation-beat-container'>
 					<div className={props.active ? 'activation-circle-active' : 'activation-circle-inactive'} ref={activationCircle}></div>
 				</div>
-				{beatIds.map((item, index) => (
+				{beatIds.current.map((item, index) => (
 					<div className='beat-wrapper' key={item} id={'beat-wrapper-' + item}>
 						<div className='beat' key={item} id={'beat-' + item}></div>
 					</div>
-				))} 
-				{waitForBeatsToLoad()}
+				))}
 			</div>
 		</div>
 	)

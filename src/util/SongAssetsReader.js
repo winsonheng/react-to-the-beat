@@ -2,32 +2,32 @@ function getSongAssets(songData, callback) {
   Promise.all([
     // Get beatmap data
     fetch('assets/beatmaps/' + songData.beatmap)
-    .then(function (response) {
-      console.log(response);
-      return response.text();
-    })
-    .then(function (result) {
-      console.log(result);
-      songData.beatmapAssets = textToBeatJSON(result);
-    }),
+      .then(function (response) {
+        return response.text();
+      })
+      .then(function (result) {
+        songData.beatmapAssets = textToBeatJSON(result);
+      }),
+
     // Get audio file
     fetch('assets/audio/' + songData.audioSrc)
-    .then(function (response) {
-      console.log('Fetched audio: ' + response);
-      return response.blob();
-    }).then(function (result) {
-      console.log(result);
-      songData.audioBlob = result;
-    })
+      .then(function (response) {
+        return response.blob();
+      }).then(function (result) {
+        songData.audioBlob = result;
+      })
+
   ]).then(value => {
     callback(songData);
   });
 }
 
 function textToBeatJSON(text) {
-  let json = {top: [], bottom: []};
+  let json = {top: [], bottom: [], beatCount: 0};
 
   let lines = text.split('\n');
+  json.beatCount = lines.length;
+  
   for (let i = 0; i < lines.length; ++i) {
     let tokens = lines[i].split(',');
     if (tokens[0] == 0) {
