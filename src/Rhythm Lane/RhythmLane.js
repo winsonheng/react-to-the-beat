@@ -50,7 +50,9 @@ function RhythmLane(props) {
 	let lastBeatOfTop = useRef();
 	let lastBeatOfBottom = useRef();
 
+	const isKeydownAdded = useRef(false);
 	let isSongInProgress = useRef(false);
+	let currBeatIndex = useRef(0);
 
 	let keyframes = useRef(Array(0)); // Object array where each Object contains the keyframes of animation
 	let durations = useRef(Array(0)); // Object array where each Object contains the duration of animation
@@ -61,19 +63,21 @@ function RhythmLane(props) {
 	let windowWidth = useRef(0);
 	let translateOffset = useRef(0); // The extra length a beat travels after reaching the activation circle
 
+	console.log('In rhythm lane, ', props.isSongEnd, isInitialised);
+
+	if (props.isSongEnd) {
+		console.log('Resetting state as song has ended');
+		isSongInProgress.current = false;
+		document.removeEventListener('keydown', keyDownHandler);
+	}
+
 	if (props.active && !isInitialised) {
-
-		setIsInitialised(prevState => {
-			return true;
-		});
-
 		windowWidth.current = window.innerWidth;
 		translateOffset.current = 70 + windowWidth.current * 0.25;
 		console.log(windowWidth.current, translateOffset.current);
 		loadAudio();
 		createBeats();
 		waitForBeatsToLoad();
-
 	}
 
 	function loadAudio() {
@@ -82,12 +86,14 @@ function RhythmLane(props) {
 			AUDIO_PLAYER.load();
 			AUDIO_PLAYER.addEventListener('ended', (e) => {
 				console.log('------------------SONG END---------------------');
-				songEnd();
+				songEndRhythmLane();
 			});
 		}
 	}
 
 	function createBeats() {
+		console.log('Creating beats!!!', props.lane);
+
 		const songData = props.songData;
 		const bpm = songData.bpm;
 		const crotchet = 60 * 1000 / bpm;
@@ -97,6 +103,9 @@ function RhythmLane(props) {
 
 		lastBeatOfTop.current = songData.beatmapAssets.top.at(-1)[0];
 		lastBeatOfBottom.current = songData.beatmapAssets.bottom.at(-1)[0];
+
+		currBeatIndex.current = 0;
+
 
 		beatIds.current = Array(beats.length);
 		keyframes.current = Array(beats.length);
@@ -141,6 +150,8 @@ function RhythmLane(props) {
 	}
 
 	function beginSong() {
+		console.log('Attempting to begin song... ', props.active, isSongInProgress.current);
+
 		if (!props.active || isSongInProgress.current) {
 			return;
 		}
@@ -161,14 +172,16 @@ function RhythmLane(props) {
 
 			const beatWrapper = document.getElementById('beat-wrapper-' + beatId);
 
+			// Animation ends when beat exits the left side of the screen
 			beatWrapper.animate(keyframes.current[i], durations.current[i]).onfinish = () => {
-				beatWrapper.classList.add('beat-inactive');
+				beat.classList.remove('beat-hit');
+				beat.classList.remove('beat-hit-miss');
 			};
 
 			// Animation ends when beat has passed the hit window
 			// Consider beat as 'MISS'
 			beat.animate([], { duration: timings.current[i] + MISS_WINDOW }).onfinish = () => {
-				if (beats.current.at(-1) == beat) {
+				if (beats.current[currBeatIndex.current] == beat) {
 					beat.classList.add('beat-hit-miss');
 
 					const hitTextDiv = hitText.current;
@@ -177,8 +190,7 @@ function RhythmLane(props) {
 					resetAnimations(hitTextDiv);
 					hitTextDiv.classList.add('hit-text-active');
 
-					beats.current.pop();
-					timings.current.pop();
+					currBeatIndex.current++;
 
 					props.scoreboardFunctions.updateScoreboard(0, JUDGEMENT_TYPES.MISS);
 				}
@@ -186,9 +198,7 @@ function RhythmLane(props) {
 
 		}
 
-		// Reverse the arrays so that we can pop the first beat from the back
-		beats.current.reverse();
-		timings.current.reverse();
+
 
 		activationCircle.current.addEventListener('animationend', (e) => {
 			activationCircle.current.classList.remove('activation-circle-hit');
@@ -198,9 +208,17 @@ function RhythmLane(props) {
 			hitText.current.classList.remove('hit-text-active');
 		});
 
-		document.addEventListener('keydown', (e) => {
+		if (!isKeydownAdded.current) {
+			document.addEventListener('keydown', keyDownHandler);
 
-			console.log(e.key);
+			isKeydownAdded.current = true;
+		}
+
+
+	}
+
+	function keyDownHandler(e) {
+		console.log(e.key);
 
 			if (props.lane == 'top' && (e.key === 's' || e.key === 'd')
 					|| props.lane == 'bottom' && (e.key === 'j' || e.key === 'k')) {
@@ -209,10 +227,10 @@ function RhythmLane(props) {
 				hitSoundAudio.play();
 				activationCircle.current.classList.add('activation-circle-hit');
 
-				if (beats.current.length > 0) {
+				if (beats.current.length > currBeatIndex.current) {
 
-					const curBeat = beats.current.at(-1);
-					const diffTiming = AUDIO_PLAYER.currentTime * 1000 + LATENCY - timings.current.at(-1);
+					const curBeat = beats.current[currBeatIndex.current];
+					const diffTiming = AUDIO_PLAYER.currentTime * 1000 + LATENCY - timings.current[currBeatIndex.current];
 					const absDiffTiming = Math.abs(diffTiming);
 					const isEarly = diffTiming < 0;
 
@@ -262,20 +280,17 @@ function RhythmLane(props) {
 
 					}
 
-					beats.current.pop();
-					timings.current.pop();
+					currBeatIndex.current++;
 
 					props.scoreboardFunctions.updateScoreboard(calculateAccuracy(absDiffTiming), beatJudgement);
 
 				}
 
-			} 
-		});
-
+			}
 	}
 
-	function songEnd() {
-		props.onSongEnd();
+	function songEndRhythmLane() {
+		props.scoreboardFunctions.songEndScoreboard();
 	}
 
 	function resetAnimations(targetDiv) {

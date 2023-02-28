@@ -54,6 +54,7 @@ export default function ScoreBoard(props) {
   const PROGRESS_BAR = useRef();
 
   let score = useRef(0);
+  let grade = useRef('D');
   let accuracy = useRef(0);
   let accuracySum = useRef(0);
   let combo = useRef(0);
@@ -66,6 +67,8 @@ export default function ScoreBoard(props) {
   let perfectScore = useRef(0);
   let farScore = useRef(0);
 
+  let progressBarInterval = useRef(null);
+
   const [scoreState, setScoreState] = useState({
     loaded: false,
   });
@@ -75,36 +78,68 @@ export default function ScoreBoard(props) {
   const [progressNow, setProgressNow] = useState(0);
 
   useEffect(() => {
-    props.setUpdateFunction(startProgressBar, updateScoreboard);
+    props.setUpdateFunction(startProgressBar, updateScoreboard, songEndScoreboard);
   }, [isActiveState]);
+
+  useEffect(() => {
+    if (progressNow >= 100) {
+      console.log('Clearing Interval');
+      clearInterval(progressBarInterval.current);
+      return;
+    }
+  }, [progressNow]);
 
 
   if (props.isActive && !scoreState.loaded) {
+    resetState();
+  }
 
+  function resetState() {
     songBeatCount.current = props.songData.beatmapAssets.beatCount;
     perfectScore.current = MAX_SCORE / songBeatCount.current;
     farScore.current = perfectScore.current / 2;
+
+    console.log(perfectScore.current, farScore.current);
 
     setScoreState(prevState => {
       return {
         ...prevState,
         score: 0,
         loaded: true,
-        songBeatCount: songBeatCount.current,
-        perfectScore: perfectScore.current,
-        farScore: farScore.current
       };
     });
 
     setIsActiveState(prevState => {
       return true;
-    })
-    
-    console.log(perfectScore.current, farScore.current);
+    });
+
+    setProgressNow(prevState => {
+      return 0;
+    });
+
+    score.current = 0;
+    grade.current = 'D';
+    accuracy.current = 0;
+    accuracySum.current = 0;
+    combo.current = 0;
+    curBeatCount.current = 0;
+    perfect.current = 0;
+    early.current = 0;
+    late.current = 0;
+    miss.current = 0;
+
+    SCORE_REF.current.innerText = 0;
+    GRADE_REF.current.innerText = 0;
+    ACCURACY_REF.current.innerText = '00.00%';
+    COMBO_REF.current.innerText = '0X';
+    PERFECT_REF.current.innerText = 0;
+    EARLY_REF.current.innerText = 0;
+    LATE_REF.current.innerText = 0;
+    MISS_REF.current.innerText = 0;
   }
 
   function startProgressBar(duration) {
-    console.log('Starting progress bar...');
+    console.log('Starting progress bar...', duration);
     const interval = 250;
     const delta = 100 * interval / (duration * 1000);
 
@@ -112,7 +147,7 @@ export default function ScoreBoard(props) {
       return delta;
     });
 
-    setInterval(() => {
+    progressBarInterval.current = setInterval(() => {
       setProgressNow(prevState => {
         return prevState + delta;
       });
@@ -142,10 +177,13 @@ export default function ScoreBoard(props) {
       case JUDGEMENT_TYPES.MISS:
         miss.current++;
         combo.current = 0;
+        break;
     }
 
+    grade.current = getGrade(score.current);
+
     SCORE_REF.current.innerText = formatNumberWithCommas(Math.round(score.current));
-    GRADE_REF.current.innerText = getGrade(score.current);
+    GRADE_REF.current.innerText = grade.current;
     ACCURACY_REF.current.innerText = (Math.round(accuracy.current * 100) / 100) + '%';
     COMBO_REF.current.innerText = combo.current + 'X';
     PERFECT_REF.current.innerText = perfect.current;
@@ -153,6 +191,25 @@ export default function ScoreBoard(props) {
     LATE_REF.current.innerText = late.current;
     MISS_REF.current.innerText = miss.current;
 
+  }
+
+  function songEndScoreboard() {
+    console.log('-----Score end scoreboard-----');
+    setIsActiveState(prevState => {
+      return false;
+    });
+    
+    setScoreState(prevState => {
+      return {
+        ...prevState,
+        loaded: false,
+      };
+    });
+
+    props.songEnd({
+      score: score.current,
+      grade: grade.current
+    });
   }
 
   return (

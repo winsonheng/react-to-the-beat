@@ -9,16 +9,18 @@
     "grade": "EX",
     "beatmap": "Tempestissimo.txt",
     "audioSrc": "Tempestissimo.mp3",
-    "initOffset": 2350,
-    "duration": 140000
+    "initOffset": 2300
   },
   {
     "difficulty": 7,
     "name": "Oshama Scramble!",
     "artist": "t+pazolite",
-    "bpm": 190,
+    "bpm": 231,
     "highscore": 9579305,
-    "grade": "AA"
+    "grade": "AA",
+    "beatmap": "Tempestissimo-Short.txt",
+    "audioSrc": "Tempestissimo-Short.mp3",
+    "initOffset": 1350
   },
   {
     "difficulty": 8,

@@ -1,7 +1,7 @@
 @font-face {
-    font-family: 'Raleway-Regular'; /*a name to be used later*/
-    src: url('../assets/fonts/Raleway-Medium.ttf'); /*URL to font*/
-  }
+    font-family: 'Raleway-Regular';
+    src: url('../assets/fonts/Raleway-Medium.ttf');
+}
 
 .scoreboard-container {
     --default-spacing: 15px;
