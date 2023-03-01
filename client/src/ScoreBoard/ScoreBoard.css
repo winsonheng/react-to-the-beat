@@ -20,6 +20,7 @@
 .loading-container {
     height: calc(30% - 2 * var(--default-spacing));
     width: calc(100% - 2 * var(--default-spacing));
+    background-color: rgba(221, 194, 155, 0.835);
     position: absolute;
     display: flex;
     align-items: center;

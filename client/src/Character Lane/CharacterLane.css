@@ -96,6 +96,10 @@
   font-weight: 600;
 }
 
+.new-highscore-text {
+  color: goldenrod;
+}
+
 .end-text-grade {
   color: aqua;
   font-family: 'POE Redcoat New Bold';

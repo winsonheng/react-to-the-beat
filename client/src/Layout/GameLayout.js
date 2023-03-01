@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './GameLayout.css';
 import RhythmLane from '../Rhythm Lane/RhythmLane';
 import ScoreBoard from '../ScoreBoard/ScoreBoard';
@@ -7,9 +7,12 @@ import SongList from '../Song Selection/SongList';
 import CharacterLane from '../Character Lane/CharacterLane';
 import readBeatmap from '../util/SongAssetsReader';
 
+const PROXY = 'http://localhost:8000';
+
 
 function GameLayout() {
   const GameState = {
+    SiteLoading: -1,
     MainMenu: 0,
     SelectSong: 1,
     SongLoading: 20,
@@ -20,7 +23,7 @@ function GameLayout() {
   }
 
   const [state, setState] = useState({
-    gameState: GameState.MainMenu,
+    gameState: GameState.SiteLoading,
     songToPlay: null
   });
 
@@ -29,12 +32,20 @@ function GameLayout() {
     updateScoreboard: null
   });
 
+  const COOKIE = useRef();
+
+  useEffect(() => {
+    obtainCookie();
+  }, []);
+
   function getGameAreaComponent(state) {
     switch (state.gameState) {
+      case GameState.SiteLoading:
+        return <></>;
       case GameState.MainMenu:
         return <StartMenu startClick={startClick}></StartMenu>;
       case GameState.SelectSong:
-        return <SongList songClick={songClick}></SongList>;
+        return <SongList songClick={songClick} playerHighscores={state.playerHighscores}></SongList>;
       case GameState.SongLoading:
         return <CharacterLane></CharacterLane>;
       case GameState.SongBegin:
@@ -42,6 +53,50 @@ function GameLayout() {
       case GameState.SongEnd:
         return <CharacterLane scoreDetails={state.scoreData} replayFunction={songReplay} returnFunction={initialiseGame}></CharacterLane>;
     }
+  }
+
+  function obtainCookie() {
+    fetch(PROXY + '/').then(
+      response => response.json()
+    ).then(
+      data => {
+        console.log('Obtained Cookie: ', data);
+        COOKIE.current = data;
+      }
+    ).then(
+      () => {
+        obtainPlayerHighscores();
+      }
+    );
+  }
+
+  function obtainPlayerHighscores() {
+    fetch(PROXY + '/players/', { credentials: 'include' }).then(
+      response => response.json()
+    ).then(
+      data => {
+        console.log('Obtained Player Highscores: ', data);
+        setState(prevState => {
+          return {
+            gameState: GameState.MainMenu,
+            songToPlay: null,
+            playerHighscores: data
+          }
+        });
+      }
+    );
+  }
+
+  function updatePlayerHighscore(name, score) {
+    console.log('Updating database: ', name, score);
+    fetch(PROXY + '/players/', { method: 'PATCH', credentials: 'include', 
+      body: JSON.stringify({ songName: name, score: score }) }).then(
+        response => response.json()
+      ).then(
+        data => {
+          console.log('Updated highscore to MongoDB. Response: ', data);
+        }
+      );
   }
 
   /**
@@ -117,6 +172,20 @@ function GameLayout() {
   function songEnd(scoreData) {
     console.log('We\'re back!');
 
+    if (state.songToPlay == null) {
+      return;
+    }
+    console.log(scoreData, state.songToPlay);
+
+    if (scoreData.score > state.songToPlay.score) {
+      state.songToPlay.score = scoreData.score;
+      scoreData.isNewHighscore = true;
+    } else {
+      scoreData.isNewHighscore = false;
+    }
+
+    updatePlayerHighscore(state.songToPlay.name, scoreData.score);
+
     setState(prevState => {
       console.log('Song has ended and state is updated');
       return {
@@ -137,10 +206,6 @@ function GameLayout() {
     });
   }
 
-  function displayCompletionScreen() {
-
-  }
-
   const gameAreaComponent = getGameAreaComponent(state);
 
   return (
@@ -159,8 +224,9 @@ function GameLayout() {
       <RhythmLane active={state.gameState == GameState.SongBegin} songData={state.songToPlay} lane='bottom'
         scoreboardFunctions={scoreboardFunctions} isSongEnd={state.gameState == GameState.SongEnd}></RhythmLane>
 
-      <ScoreBoard isLoading={state.gameState == GameState.SongLoading} isActive={state.gameState == GameState.SongBegin}
-        songData={state.songToPlay} setUpdateFunction={setFunctionFromScoreboard} songEnd={songEnd}></ScoreBoard>
+      <ScoreBoard isLoading={state.gameState == GameState.SongLoading || state.gameState == GameState.SiteLoading} 
+        isActive={state.gameState == GameState.SongBegin} songData={state.songToPlay} 
+        setUpdateFunction={setFunctionFromScoreboard} songEnd={songEnd}></ScoreBoard>
     </div>
   );
 }

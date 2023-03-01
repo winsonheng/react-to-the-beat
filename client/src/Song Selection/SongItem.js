@@ -20,7 +20,7 @@ export default function SongItem(props) {
         </div>
         <div className='highscore-container'>
             <div className='highscore-text'>HI</div>
-            <div className='highscore'>{formatNumberWithCommas(props.songData.highscore)}</div>
+            <div className='highscore'>{formatNumberWithCommas(props.songData.score)}</div>
         </div>
         <div className='grade-container'>
           <div className='grade'>{props.songData.grade}</div>
