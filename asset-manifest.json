@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/react-gh-pages/static/css/main.286d353c.css",
+    "main.js": "/react-gh-pages/static/js/main.c2c1ce63.js",
+    "static/js/787.80d4b497.chunk.js": "/react-gh-pages/static/js/787.80d4b497.chunk.js",
+    "static/media/background-cropped.png": "/react-gh-pages/static/media/background-cropped.09c1fd05643fcd967e6a.png",
+    "static/media/Raleway-Medium.ttf": "/react-gh-pages/static/media/Raleway-Medium.601cda68c7b7bbcc9a12.ttf",
+    "static/media/character.png": "/react-gh-pages/static/media/character.8bf8aaa7218af65c502f.png",
+    "static/media/PoeRedcoatNewBold-rJZ7.ttf": "/react-gh-pages/static/media/PoeRedcoatNewBold-rJZ7.c3e412d59e90e3fb8cd9.ttf",
+    "static/media/lava-wall.png": "/react-gh-pages/static/media/lava-wall.a4ad44acdea12d494edf.png",
+    "static/media/hit-sound.mp3": "/react-gh-pages/static/media/hit-sound.5f0437e040bb81e25bba.mp3",
+    "static/media/logo.svg": "/react-gh-pages/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/react-gh-pages/index.html",
+    "main.286d353c.css.map": "/react-gh-pages/static/css/main.286d353c.css.map",
+    "main.c2c1ce63.js.map": "/react-gh-pages/static/js/main.c2c1ce63.js.map",
+    "787.80d4b497.chunk.js.map": "/react-gh-pages/static/js/787.80d4b497.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.286d353c.css",
+    "static/js/main.c2c1ce63.js"
+  ]
+}
