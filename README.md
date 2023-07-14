@@ -1,4 +1,4 @@
-# rhythm-game __(will think of a name soon!)__
+# React to the Beat
 
 A simple web-based rhythm game developed using MongoDB, Express, React, and Node (MERN).
 
