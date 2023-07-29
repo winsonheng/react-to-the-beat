@@ -76,6 +76,10 @@ function GameLayout() {
     ).then(
       data => {
         console.log('Obtained Player Highscores: ', data);
+        if (data.message === 'Cannot find player') {
+          console.log('No player data found');
+          data = null;
+        }
         setState(prevState => {
           return {
             gameState: GameState.MainMenu,
@@ -183,8 +187,6 @@ function GameLayout() {
     } else {
       scoreData.isNewHighscore = false;
     }
-
-    updatePlayerHighscore(state.songToPlay.name, scoreData.score);
 
     setState(prevState => {
       console.log('Song has ended and state is updated');

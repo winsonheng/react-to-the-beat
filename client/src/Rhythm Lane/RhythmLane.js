@@ -21,21 +21,21 @@ function calculateAccuracy(absDiffTiming) {
 
 function waitForElm(selector) {
 	return new Promise(resolve => {
+		if (document.querySelector(selector)) {
+			return resolve(document.querySelector(selector));
+		}
+
+		const observer = new MutationObserver(mutations => {
 			if (document.querySelector(selector)) {
-					return resolve(document.querySelector(selector));
+				resolve(document.querySelector(selector));
+				observer.disconnect();
 			}
+		});
 
-			const observer = new MutationObserver(mutations => {
-					if (document.querySelector(selector)) {
-							resolve(document.querySelector(selector));
-							observer.disconnect();
-					}
-			});
-
-			observer.observe(document.body, {
-					childList: true,
-					subtree: true
-			});
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
 	});
 }
 
@@ -142,7 +142,7 @@ function RhythmLane(props) {
 			console.log('Element is ready: ', elm, props.lane);
 			waitForElm('#beat-' + lastBeatOfBottom.current).then((elm) => {
 				console.log('Element is ready: ', elm, props.lane);
-				setTimeout(function() {
+				setTimeout(function () {
 					beginSong();
 				}, FIXED_DELAY);
 			});
@@ -163,7 +163,7 @@ function RhythmLane(props) {
 			AUDIO_PLAYER.play();
 			props.scoreboardFunctions.startProgressBar(AUDIO_PLAYER.duration);
 		}
-		
+
 		beats.current = Array(keyframes.current.length);
 		for (const i in keyframes.current) {
 			const beatId = beatIds.current[i];
@@ -220,73 +220,73 @@ function RhythmLane(props) {
 	function keyDownHandler(e) {
 		console.log(e.key);
 
-			if (props.lane == 'top' && (e.key === 's' || e.key === 'd')
-					|| props.lane == 'bottom' && (e.key === 'j' || e.key === 'k')) {
+		if (props.lane == 'top' && (e.key === 's' || e.key === 'd')
+			|| props.lane == 'bottom' && (e.key === 'j' || e.key === 'k')) {
 
-				hitSoundAudio.currentTime = 0;
-				hitSoundAudio.play();
-				activationCircle.current.classList.add('activation-circle-hit');
+			hitSoundAudio.currentTime = 0;
+			hitSoundAudio.play();
+			activationCircle.current.classList.add('activation-circle-hit');
 
-				if (beats.current.length > currBeatIndex.current) {
+			if (beats.current.length > currBeatIndex.current) {
 
-					const curBeat = beats.current[currBeatIndex.current];
-					const diffTiming = AUDIO_PLAYER.currentTime * 1000 + LATENCY - timings.current[currBeatIndex.current];
-					const absDiffTiming = Math.abs(diffTiming);
-					const isEarly = diffTiming < 0;
+				const curBeat = beats.current[currBeatIndex.current];
+				const diffTiming = AUDIO_PLAYER.currentTime * 1000 + LATENCY - timings.current[currBeatIndex.current];
+				const absDiffTiming = Math.abs(diffTiming);
+				const isEarly = diffTiming < 0;
 
-					const hitTextDiv = hitText.current;
+				const hitTextDiv = hitText.current;
 
-					if (absDiffTiming > MISS_WINDOW) {
-						return;
-					}
+				if (absDiffTiming > MISS_WINDOW) {
+					return;
+				}
 
-					resetAnimations(hitTextDiv);
+				resetAnimations(hitTextDiv);
 
-					hitTextDiv.classList.add('hit-text-active');
+				hitTextDiv.classList.add('hit-text-active');
 
-					const beatAcc = calculateAccuracy(absDiffTiming);
-					let beatJudgement;
+				const beatAcc = calculateAccuracy(absDiffTiming);
+				let beatJudgement;
 
-					if (absDiffTiming <= PERFECT_WINDOW) {
+				if (absDiffTiming <= PERFECT_WINDOW) {
 
-						curBeat.classList.add('beat-hit');
-						hitTextDiv.innerText = 'Perfect!';
-						hitTextDiv.style.color = 'lightgreen';
-						beatJudgement = JUDGEMENT_TYPES.PERFECT;
+					curBeat.classList.add('beat-hit');
+					hitTextDiv.innerText = 'Perfect!';
+					hitTextDiv.style.color = 'lightgreen';
+					beatJudgement = JUDGEMENT_TYPES.PERFECT;
 
-					} else if (absDiffTiming <= FAR_WINDOW) {
+				} else if (absDiffTiming <= FAR_WINDOW) {
 
-						curBeat.classList.add('beat-hit');
+					curBeat.classList.add('beat-hit');
 
-						if (isEarly) {
+					if (isEarly) {
 
-							hitTextDiv.innerText = 'Early!';
-							hitTextDiv.style.color = 'deepskyblue';
-							beatJudgement = JUDGEMENT_TYPES.EARLY;
+						hitTextDiv.innerText = 'Early!';
+						hitTextDiv.style.color = 'deepskyblue';
+						beatJudgement = JUDGEMENT_TYPES.EARLY;
 
-						} else {
+					} else {
 
-							hitTextDiv.innerText = 'Late!';
-							hitTextDiv.style.color = 'orange';
-							beatJudgement = JUDGEMENT_TYPES.LATE;
-
-						}
-					} else { // absDiffTiming <= MISS_WINDOW
-
-						curBeat.classList.add('beat-hit-miss');
-						hitTextDiv.innerText = 'MISS!';
-						hitTextDiv.style.color = 'red';
-						beatJudgement = JUDGEMENT_TYPES.MISS;
+						hitTextDiv.innerText = 'Late!';
+						hitTextDiv.style.color = 'orange';
+						beatJudgement = JUDGEMENT_TYPES.LATE;
 
 					}
+				} else { // absDiffTiming <= MISS_WINDOW
 
-					currBeatIndex.current++;
-
-					props.scoreboardFunctions.updateScoreboard(calculateAccuracy(absDiffTiming), beatJudgement);
+					curBeat.classList.add('beat-hit-miss');
+					hitTextDiv.innerText = 'MISS!';
+					hitTextDiv.style.color = 'red';
+					beatJudgement = JUDGEMENT_TYPES.MISS;
 
 				}
 
+				currBeatIndex.current++;
+
+				props.scoreboardFunctions.updateScoreboard(calculateAccuracy(absDiffTiming), beatJudgement);
+
 			}
+
+		}
 	}
 
 	function songEndRhythmLane() {

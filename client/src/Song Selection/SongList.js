@@ -30,12 +30,17 @@ export default function SongList(props) {
 
   function populateSongList() {
     console.log('Populating Song List ...', props.playerHighscores);
-    for (const playerSong of props.playerHighscores.highscores) {
-      for (const jsonSong of songListData) {
+    for (const jsonSong of songListData) {
+      SONG_DATA.current.push(jsonSong);
+      if (props.playerHighscores == null) {
+        console.log('NOT LOGGED IN');
+        // Player not logged in
+        continue;
+      }
+      for (const playerSong of props.playerHighscores.highscores) {
         if (playerSong.songName == jsonSong.name) {
           jsonSong.score = playerSong.score;
           jsonSong.grade = playerSong.grade;
-          SONG_DATA.current.push(jsonSong);
           break;
         }
       }
