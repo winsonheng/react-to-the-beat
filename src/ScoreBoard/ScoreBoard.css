@@ -1,5 +1,185 @@
-.scoreboard {
+@font-face {
+    font-family: 'Raleway-Regular';
+    src: url('../assets/fonts/Raleway-Medium.ttf');
+}
+
+.scoreboard-container {
+    --default-spacing: 15px;
+}
+
+.scoreboard-container {
     height: 30%;
     width: 100%;
-    background-color: green;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(221, 193, 155);
+    padding: var(--default-spacing);
 }
+
+.loading-container {
+    height: calc(30% - 2 * var(--default-spacing));
+    width: calc(100% - 2 * var(--default-spacing));
+    background-color: rgba(221, 194, 155, 0.835);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    visibility: hidden;
+}
+
+.loading-text {
+    font-size: 28px;
+}
+
+.loading-text-active {
+    visibility: visible;
+}
+
+.song-progress-bar {
+    width: 100%;
+}
+
+.scoreboard {
+    width: 100%;
+    flex-grow: 1;
+    box-sizing: border-box;
+    margin-top: var(--default-spacing);
+    display: flex;
+    flex-direction: row;
+}
+
+.score-accuracy-combo-container {
+    height: 100%;
+    width: 38%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: var(--default-spacing);
+}
+
+.score-container {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(28, 125, 236, 0.776);
+}
+
+.score {
+    font-size: 48px;
+    -webkit-text-stroke: 1px rgb(85, 85, 85);
+    font-family: 'Raleway-Regular';
+    flex-grow: 1;
+    text-align: center;
+}
+
+.score-text-container {
+    height: 100%;
+    background-color: rgba(118, 117, 109, 0.849);
+    padding: var(--default-spacing);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.score-text {
+    font-size: 48px;
+    font-weight: 500;
+}
+
+.accuracy-combo-container {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.accuracy-combo-container > div {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(172, 67, 242, 0.689);
+}
+
+.accuracy-combo-container > div > div:first-child {
+    width: 100%;
+    font-style: italic;
+    font-weight: 100;
+}
+
+.accuracy-combo-container > div > div:last-child {
+    width: 100%;
+    font-weight: 500;
+    font-family: 'Raleway-Regular';
+}
+
+.judgement-container {
+    height: 100%;
+    min-width: 18%;
+    width: 24%;
+    max-width: 30%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    margin-right: var(--default-spacing);
+    justify-content: space-between;
+}
+
+.judgement {
+    width: 100%;
+    border-radius: var(--default-spacing);
+    padding: 0px var(--default-spacing) 0px var(--default-spacing);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(89, 120, 117, 0.912);
+}
+
+.judgement-text {
+    flex-grow: 1;
+    text-align: left;
+    font-size: 24px;
+    font-weight: 700;
+    margin-right: 30px;
+}
+
+.judgement-count {
+    flex-grow: 1;
+    text-align: right;
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Raleway-Regular';
+
+
+}
+
+.perfect > * {
+    color: rgb(95, 202, 95);
+}
+
+.early > * {
+    color: rgb(61, 199, 245);
+}
+
+.late > * {
+    color: rgb(251, 179, 45);
+}
+
+.miss > * {
+    color: rgb(247, 88, 88);
+}
+
+.song-details-container {
+    height: 100%;
+    width: 38%;
+    display: flex;
+    flex-direction: column;
+    background-color: brown;
+}
+

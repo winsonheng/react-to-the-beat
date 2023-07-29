@@ -8,9 +8,10 @@
     justify-content: space-evenly;
 }
 
-.start-menu h1 {
+button {
     color: white;
-    font-weight: 420;
+    font-size: 42px;
+    font-weight: 500;
     padding: 0px 42px 5px 42px;
     background-color: rgb(225, 172, 91);
     border: 5px solid rgb(93, 57, 0);
@@ -24,18 +25,18 @@
             user-select: none; /* Non-prefixed version, currently */
 }
 
-.start-menu h1:hover {
+button:hover {
     transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
     background-color: rgb(203, 145, 57);
     cursor: pointer;
 }
 
-.start-menu h1:active {
+button:active {
     transition: all 0.1s;
     transform: scale(.9);
   }
 
-.start-menu h1:focus-visible {
+button:focus-visible {
     box-shadow: hsl(160, 7%, 16%) 0 0 0 2px, hsla(0, 0%, 100%, 0.8) 0 0 0 4px;
     transition: box-shadow .2s;
 }

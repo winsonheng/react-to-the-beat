@@ -1,50 +1,45 @@
 [
   {
     "difficulty": 6,
-    "name": "World Vanquisher",
-    "artist": "void (Mournfinale)",
-    "bpm": 170,
-    "highscore": 9823612,
-    "grade": "EX"
+    "name": "Tempestissimo",
+    "artist": "t+pazolite",
+    "bpm": 231,
+    "beatCount": 35,
+    "beatmap": "Tempestissimo.txt",
+    "audioSrc": "Tempestissimo.mp3",
+    "initOffset": 2300
   },
   {
     "difficulty": 7,
     "name": "Oshama Scramble!",
     "artist": "t+pazolite",
-    "bpm": 190,
-    "highscore": 9579305,
-    "grade": "AA"
+    "bpm": 231,
+    "beatmap": "Tempestissimo-Short.txt",
+    "audioSrc": "Tempestissimo-Short.mp3",
+    "initOffset": 1350
+  },
+  {
+    "difficulty": 8,
+    "name": "World Vanquisher",
+    "artist": "void (Mournfinale)",
+    "bpm": 170
+  },
+  {
+    "difficulty": 7,
+    "name": "Oshama Scramble!",
+    "artist": "t+pazolite",
+    "bpm": 190
   },
   {
     "difficulty": 6,
     "name": "World Vanquisher",
     "artist": "void (Mournfinale)",
-    "bpm": 170,
-    "highscore": 9823612,
-    "grade": "EX"
+    "bpm": 170
   },
   {
     "difficulty": 7,
     "name": "Oshama Scramble!",
     "artist": "t+pazolite",
-    "bpm": 190,
-    "highscore": 9579305,
-    "grade": "AA"
-  },
-  {
-    "difficulty": 6,
-    "name": "World Vanquisher",
-    "artist": "void (Mournfinale)",
-    "bpm": 170,
-    "highscore": 9823612,
-    "grade": "EX"
-  },
-  {
-    "difficulty": 7,
-    "name": "Oshama Scramble!",
-    "artist": "t+pazolite",
-    "bpm": 190,
-    "highscore": 9579305,
-    "grade": "AA"
+    "bpm": 190
   }
 ]

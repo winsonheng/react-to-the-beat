@@ -1,4 +1,16 @@
+@font-face {
+  font-family: 'POE Redcoat New Bold';
+  src: url('../assets/fonts/PoeRedcoatNewBold-rJZ7.ttf');
+}
+
 .character-lane {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.character-left-container {
   height: 100%;
   width: 20%;
   display: flex;
@@ -36,4 +48,73 @@
   aspect-ratio: 420 / 655;
   background: url("../assets/images/character.png");
   background-size: auto 100%;
+}
+
+.empty-space-5 {
+  width: 5%;
+}
+
+.countdown-container {
+  height: 100%;
+  width: 60%;
+  display: flex;
+  position: absolute;
+  left: 20%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+}
+
+.countdown-text {
+  font-size: 69px;
+  visibility: hidden;
+}
+
+.character-right-container {
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+}
+
+.character-right-container-active {
+  visibility: visible;
+}
+
+.end-text-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.end-text {
+  color: white;
+  font-size: 42px;
+  font-weight: 600;
+}
+
+.new-highscore-text {
+  color: goldenrod;
+}
+
+.end-text-grade {
+  color: aqua;
+  font-family: 'POE Redcoat New Bold';
+  font-size: 69px;
+
+}
+
+.end-buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.end-buttons-container button {
+  font-size: 28px;
+  margin: 15px;
+  box-sizing: border-box;
 }

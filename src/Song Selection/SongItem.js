@@ -1,11 +1,8 @@
 import React from 'react'
+import { formatNumberWithCommas } from '../util/StringFormatter';
 import './SongItem.css'
 
 export default function SongItem(props) {
-
-  function formatHighscore(highscore) {
-    return highscore.toLocaleString();
-  }
 
   return (
     <div className='songitem' onClick={() => props.hideSonglist(props.songData)}>
@@ -23,7 +20,7 @@ export default function SongItem(props) {
         </div>
         <div className='highscore-container'>
             <div className='highscore-text'>HI</div>
-            <div className='highscore'>{formatHighscore(props.songData.highscore)}</div>
+            <div className='highscore'>{props.songData.score ? formatNumberWithCommas(props.songData.score) : 'NA'}</div>
         </div>
         <div className='grade-container'>
           <div className='grade'>{props.songData.grade}</div>
