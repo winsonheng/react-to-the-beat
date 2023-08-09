@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/react-to-the-beat/static/css/main.ef250e3c.css",
+    "main.css": "/react-to-the-beat/static/css/main.30b96ed6.css",
     "main.js": "/react-to-the-beat/static/js/main.53b92433.js",
     "static/js/787.80d4b497.chunk.js": "/react-to-the-beat/static/js/787.80d4b497.chunk.js",
     "static/media/background-cropped.png": "/react-to-the-beat/static/media/background-cropped.09c1fd05643fcd967e6a.png",
@@ -11,12 +11,12 @@
     "static/media/hit-sound.mp3": "/react-to-the-beat/static/media/hit-sound.5f0437e040bb81e25bba.mp3",
     "static/media/logo.svg": "/react-to-the-beat/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/react-to-the-beat/index.html",
-    "main.ef250e3c.css.map": "/react-to-the-beat/static/css/main.ef250e3c.css.map",
+    "main.30b96ed6.css.map": "/react-to-the-beat/static/css/main.30b96ed6.css.map",
     "main.53b92433.js.map": "/react-to-the-beat/static/js/main.53b92433.js.map",
     "787.80d4b497.chunk.js.map": "/react-to-the-beat/static/js/787.80d4b497.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ef250e3c.css",
+    "static/css/main.30b96ed6.css",
     "static/js/main.53b92433.js"
   ]
 }
