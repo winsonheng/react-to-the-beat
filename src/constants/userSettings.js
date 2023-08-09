@@ -1,0 +1,5 @@
+export const VERIFICATION_STATUS = {
+  BLOCKED: 0,
+  PENDING: 1,
+  VERIFIED: 2
+}

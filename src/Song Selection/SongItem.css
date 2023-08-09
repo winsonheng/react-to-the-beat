@@ -1,7 +1,6 @@
 .songitem {
     height: 80px;
     width: 80%;
-    background-color: rgba(18, 53, 108, 0.687);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -36,7 +35,7 @@
 }
 
 .difficulty-container {
-    background-color: white;
+    background-color: rgb(110, 244, 106);
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -46,7 +45,7 @@
 }
 
 .difficulty {
-    color: rgb(185, 115, 250);
+    color: rgb(195, 34, 210);
     font-size: 32px;
     font-weight: bold;
     text-align: center;
@@ -54,6 +53,8 @@
 }
 
 .song-info-container {
+    background-color: rgba(18, 53, 108, 0.687);
+    min-width: 15ch;
     height: 100%;
     flex-grow: 1;
     display: flex;
@@ -61,12 +62,19 @@
     justify-content: space-evenly;
     padding: 5px 15px 5px 20px;
     box-sizing: border-box;
+    
 }
 
 .song-name {
     font-size: 24px;
     font-weight: 600;
     text-align: left;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    line-clamp: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .song-artist {
@@ -74,6 +82,12 @@
     font-weight: 300;
     font-style: italic;
     text-align: left;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    line-clamp: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .songitem-right {
@@ -84,6 +98,7 @@
 }
 
 .bpm-container {
+    background-color: rgba(18, 53, 108, 0.687);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -121,6 +136,7 @@
     font-weight: 800;
     font-family: monospace;
     text-align: center;
+    min-width: 10ch;
 }
 
 .highscore {

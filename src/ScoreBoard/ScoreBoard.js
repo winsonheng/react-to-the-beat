@@ -9,18 +9,18 @@ const GRADE_BOUNDARIES = {
   C: 800000,
   B: 850000,
   A: 900000,
-  AA: 950000,
-  EX: 980000,
-  PM: 1000000
+  S: 950000,
+  SS: 980000,
+  SSS: 1000000
 };
 
 function getGrade(score) {
-  if (score >= GRADE_BOUNDARIES.PM) {
-    return 'PM';
-  } else if (score >= GRADE_BOUNDARIES.EX) {
-    return 'EX';
-  } else if (score >= GRADE_BOUNDARIES.AA) {
-    return 'AA';
+  if (score >= GRADE_BOUNDARIES.SSS) {
+    return 'SSS';
+  } else if (score >= GRADE_BOUNDARIES.SS) {
+    return 'SS';
+  } else if (score >= GRADE_BOUNDARIES.S) {
+    return 'S';
   } else if (score >= GRADE_BOUNDARIES.A) {
     return 'A';
   } else if (score >= GRADE_BOUNDARIES.B) {

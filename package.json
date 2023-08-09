@@ -1,8 +1,7 @@
 {
   "name": "react-personal-website-test",
   "version": "0.1.0",
-  "proxy": "http://0.0.0.0:8000",
-  "homepage": "https://gitname.github.io/react-gh-pages",
+  "homepage": "https://winsonheng.github.io/react-to-the-beat",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
@@ -11,6 +10,7 @@
     "bootstrap": "^5.2.3",
     "react": "^18.0.0",
     "react-bootstrap": "^2.7.2",
+    "react-cookie": "^4.1.1",
     "react-dom": "^18.0.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"

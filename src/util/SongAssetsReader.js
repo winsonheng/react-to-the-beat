@@ -1,7 +1,9 @@
+import { CLIENT_BASE_URL } from "../constants/config";
+
 function getSongAssets(songData, callback) {
   Promise.all([
     // Get beatmap data
-    fetch('assets/beatmaps/' + songData.beatmap)
+    fetch(CLIENT_BASE_URL + '/assets/beatmaps/' + songData.beatmap)
       .then(function (response) {
         return response.text();
       })
@@ -10,7 +12,7 @@ function getSongAssets(songData, callback) {
       }),
 
     // Get audio file
-    fetch('assets/audio/' + songData.audioSrc)
+    fetch(CLIENT_BASE_URL + '/assets/audio/' + songData.audioSrc)
       .then(function (response) {
         return response.blob();
       }).then(function (result) {

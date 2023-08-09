@@ -6,8 +6,7 @@ import StartMenu from './StartMenu';
 import SongList from '../Song Selection/SongList';
 import CharacterLane from '../Character Lane/CharacterLane';
 import readBeatmap from '../util/SongAssetsReader';
-
-const PROXY = 'http://localhost:8000';
+import { BACKEND_BASE_URL } from '../constants/config';
 
 
 function GameLayout() {
@@ -32,8 +31,6 @@ function GameLayout() {
     updateScoreboard: null
   });
 
-  const COOKIE = useRef();
-
   useEffect(() => {
     obtainCookie();
   }, []);
@@ -56,12 +53,13 @@ function GameLayout() {
   }
 
   function obtainCookie() {
-    fetch(PROXY + '/').then(
-      response => response.json()
+    fetch(BACKEND_BASE_URL + '/players/getCookie', { credentials: 'include' }).then(
+      response => {
+        return response.json();
+      }
     ).then(
       data => {
         console.log('Obtained Cookie: ', data);
-        COOKIE.current = data;
       }
     ).then(
       () => {
@@ -71,7 +69,7 @@ function GameLayout() {
   }
 
   function obtainPlayerHighscores() {
-    fetch(PROXY + '/players/', { credentials: 'include' }).then(
+    fetch(BACKEND_BASE_URL + '/players/getPlayerByCookie', { credentials: 'include' }).then(
       response => response.json()
     ).then(
       data => {
@@ -93,7 +91,7 @@ function GameLayout() {
 
   function updatePlayerHighscore(name, score) {
     console.log('Updating database: ', name, score);
-    fetch(PROXY + '/players/', { method: 'PATCH', credentials: 'include', 
+    fetch(BACKEND_BASE_URL + '/players/', { method: 'PATCH', credentials: 'include', 
       body: JSON.stringify({ songName: name, score: score }) }).then(
         response => response.json()
       ).then(
@@ -163,6 +161,7 @@ function GameLayout() {
    * @param {Object} songData - Same as previous songData but contains song assets including the beatmap and audio. 
    */
   function songDataLoaded(songData) {
+    console.log(songData);
     setState(prevState => {
       console.log("Song data has been loaded...");
       return {

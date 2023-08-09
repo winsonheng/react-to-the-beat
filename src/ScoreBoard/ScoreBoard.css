@@ -39,6 +39,7 @@
 
 .song-progress-bar {
     width: 100%;
+    min-height: 15px;
 }
 
 .scoreboard {
@@ -70,7 +71,7 @@
 }
 
 .score {
-    font-size: 48px;
+    font-size: 42px;
     -webkit-text-stroke: 1px rgb(85, 85, 85);
     font-family: 'Raleway-Regular';
     flex-grow: 1;
@@ -87,7 +88,7 @@
 }
 
 .score-text {
-    font-size: 48px;
+    font-size: 42px;
     font-weight: 500;
 }
 
