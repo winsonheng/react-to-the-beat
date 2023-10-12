@@ -129,7 +129,7 @@ export default function ScoreBoard(props) {
     miss.current = 0;
 
     SCORE_REF.current.innerText = 0;
-    GRADE_REF.current.innerText = 0;
+    GRADE_REF.current.innerText = 'D';
     ACCURACY_REF.current.innerText = '00.00%';
     COMBO_REF.current.innerText = '0X';
     PERFECT_REF.current.innerText = 0;
@@ -207,8 +207,9 @@ export default function ScoreBoard(props) {
     });
 
     props.songEnd({
-      score: score.current,
-      grade: grade.current
+      score: Math.round(score.current),
+      grade: grade.current,
+      songName: props.songData.name
     });
   }
 

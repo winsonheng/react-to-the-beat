@@ -4,8 +4,8 @@ import './RhythmLane.css';
 import hitSound from '../assets/audio/hit-sound.mp3';
 
 const AUDIO_PLAYER = new Audio();
-const FIXED_DELAY = 1000;
-const LATENCY = 150;
+const INITIAL_TIMEOUT = 1000;			// Timeout before song begins
+const OFFSET = 100;					// Difference in time between the actual beat in the audio and the beat circle 
 const PERFECT_WINDOW = 80;
 const FAR_WINDOW = 125;
 const MISS_WINDOW = 200;
@@ -144,7 +144,7 @@ function RhythmLane(props) {
 				console.log('Element is ready: ', elm, props.lane);
 				setTimeout(function () {
 					beginSong();
-				}, FIXED_DELAY);
+				}, INITIAL_TIMEOUT);
 			});
 		});
 	}
@@ -230,7 +230,7 @@ function RhythmLane(props) {
 			if (beats.current.length > currBeatIndex.current) {
 
 				const curBeat = beats.current[currBeatIndex.current];
-				const diffTiming = AUDIO_PLAYER.currentTime * 1000 + LATENCY - timings.current[currBeatIndex.current];
+				const diffTiming = AUDIO_PLAYER.currentTime * 1000 + OFFSET - timings.current[currBeatIndex.current];
 				const absDiffTiming = Math.abs(diffTiming);
 				const isEarly = diffTiming < 0;
 

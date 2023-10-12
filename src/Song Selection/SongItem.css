@@ -35,7 +35,7 @@
 }
 
 .difficulty-container {
-    background-color: rgb(110, 244, 106);
+    background-color: rgb(26, 127, 22);
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -45,7 +45,7 @@
 }
 
 .difficulty {
-    color: rgb(195, 34, 210);
+    color: rgb(255, 255, 255);
     font-size: 32px;
     font-weight: bold;
     text-align: center;

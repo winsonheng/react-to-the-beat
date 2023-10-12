@@ -6,6 +6,7 @@ import StartMenu from './StartMenu';
 import SongList from '../Song Selection/SongList';
 import CharacterLane from '../Character Lane/CharacterLane';
 import readBeatmap from '../util/SongAssetsReader';
+import FPSStats from 'react-fps-stats';
 import { BACKEND_BASE_URL } from '../constants/config';
 
 
@@ -63,17 +64,17 @@ function GameLayout() {
       }
     ).then(
       () => {
-        obtainPlayerHighscores();
+        obtainPlayerInfo();
       }
     );
   }
 
-  function obtainPlayerHighscores() {
+  function obtainPlayerInfo() {
     fetch(BACKEND_BASE_URL + '/players/getPlayerByCookie', { credentials: 'include' }).then(
       response => response.json()
     ).then(
       data => {
-        console.log('Obtained Player Highscores: ', data);
+        console.log('Obtained Player Info: ', data);
         if (data.message === 'Cannot find player') {
           console.log('No player data found');
           data = null;
@@ -89,16 +90,34 @@ function GameLayout() {
     );
   }
 
-  function updatePlayerHighscore(name, score) {
-    console.log('Updating database: ', name, score);
-    fetch(BACKEND_BASE_URL + '/players/', { method: 'PATCH', credentials: 'include', 
-      body: JSON.stringify({ songName: name, score: score }) }).then(
-        response => response.json()
-      ).then(
-        data => {
-          console.log('Updated highscore to MongoDB. Response: ', data);
-        }
-      );
+  function updatePlayerHighscore(songName, score, grade) {
+    console.log('Updating database: ', songName, score, grade);
+    fetch(BACKEND_BASE_URL + '/players/updateHighscoreByCookie', 
+    { 
+      method: 'POST', 
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        songName: songName, 
+        score: score,
+        grade: grade
+      })
+    }).then(
+      response => response.json()
+    ).then(
+      data => {
+        console.log('Updated highscore to MongoDB. Response: ', data);
+        setState(prevState => {
+          return {
+            ...prevState,
+            playerHighscores: data
+          }
+        })
+      }
+    );
   }
 
   /**
@@ -195,6 +214,8 @@ function GameLayout() {
         scoreData: scoreData
       };
     });
+
+    updatePlayerHighscore(scoreData.songName, scoreData.score, scoreData.grade);
   }
 
   function songReplay() {
@@ -205,6 +226,10 @@ function GameLayout() {
         gameState: GameState.SongBegin,
       };
     });
+  }
+
+  function postHighscore() {
+    
   }
 
   const gameAreaComponent = getGameAreaComponent(state);
@@ -228,6 +253,7 @@ function GameLayout() {
       <ScoreBoard isLoading={state.gameState == GameState.SongLoading || state.gameState == GameState.SiteLoading} 
         isActive={state.gameState == GameState.SongBegin} songData={state.songToPlay} 
         setUpdateFunction={setFunctionFromScoreboard} songEnd={songEnd}></ScoreBoard>
+      {/* <FPSStats /> */}
     </div>
   );
 }
